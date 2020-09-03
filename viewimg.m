@@ -1,0 +1,51 @@
+load('image_sequence.mat');
+numOfFrames = size(stacks_discrete,3);
+n = 5;
+itp_factor = 4;
+framesPerPhase = numOfFrames/n/n;
+framesSIM = zeros(size(stacks_discrete,1),size(stacks_discrete,1),n^2);
+framesSOFI = zeros(size(stacks_discrete,1)*4,size(stacks_discrete,1)*4,n^2);
+for j = 1 : n
+   for k = 1 : n
+       for i = 1 : framesPerPhase
+            framesSIM(:,:,k+(j-1)*n) = framesSIM(:,:,k+(j-1)*n)+...
+            double(stacks_discrete(:,:,(k-1+(j-1)*n)*framesPerPhase+i));
+       end
+       framesSIM(:,:,k+(j-1)*n) = framesSIM(:,:,k+(j-1)*n)/framesPerPhase;
+       [a,~] = FSOFI_Analysis(stacks_discrete(:,:,...
+           (k+(j-1)*n-1)*framesPerPhase+1:(k+(j-1)*n)*framesPerPhase),2,100,0,itp_factor); 
+       framesSOFI(:,:,k+(j-1)*n) = a;
+   end
+end
+
+SIM = zeros(size(framesSIM,1),size(framesSIM,1));
+for i = 1:n^2
+   SIM = SIM+framesSIM(:,:,i); 
+end
+
+minSIM = min(min(SIM))/n^2;
+maxSIM = max(max(SIM))/n^2;
+figure;
+for i = 1 : n^2
+    subplot(n,n,i);
+    imshow(framesSIM(:,:,i),[minSIM maxSIM]);
+end
+
+SOFI = zeros(size(framesSOFI,1),size(framesSOFI,1));
+for i = 1:n^2
+   SOFI = SOFI+framesSOFI(:,:,i); 
+end
+minSOFI = min(min(SOFI))/n^2;
+maxSOFI = max(max(SOFI))/n^2;
+figure;
+for i = 1 : n^2
+    subplot(n,n,i);
+    imshow(framesSOFI(:,:,i),[minSOFI maxSOFI]);
+end
+figure;
+subplot(1,2,1);
+imshow(SIM,[]);
+title("Original Image")
+subplot(1,2,2);
+imshow(SOFI,[]);
+title("2nd order SOFI")

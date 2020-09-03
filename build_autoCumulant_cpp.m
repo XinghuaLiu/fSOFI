@@ -12,9 +12,9 @@
 % openMP the Microsoft Visual Studio 2012 Redistributable Version 4 is
 % needed.
 
-mex -v autoCumulant2D_cpp.cpp COMPFLAGS="$COMPFLAGS /openmp"
-mex -v autoCumulant3D_cpp.cpp COMPFLAGS="$COMPFLAGS /openmp"
+% mex -v autoCumulant2D_cpp.cpp COMPFLAGS="$COMPFLAGS /openmp"
+% mex -v autoCumulant3D_cpp.cpp COMPFLAGS="$COMPFLAGS /openmp"
 
 %% Without openMP (no parallel processing)
-% mex -v autoCumulant2D_cpp.cpp COMPFLAGS="$COMPFLAGS /MT"
-% mex -v autoCumulant3D_cpp.cpp COMPFLAGS="$COMPFLAGS /MT"
+mex -v autoCumulant2D_cpp.cpp COMPFLAGS="$COMPFLAGS /MT"
+mex -v autoCumulant3D_cpp.cpp COMPFLAGS="$COMPFLAGS /MT"
