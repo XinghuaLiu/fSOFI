@@ -1,4 +1,4 @@
-load('..\sofitool\GUI\image_sequence.mat');
+load('..\image_sequence.mat');
 numOfFrames = size(stacks_discrete,3);
 n = 5;
 itp_factor = 2;
@@ -15,7 +15,7 @@ for j = 1 : n
        end
        framesSIM(:,:,k+(j-1)*n) = framesSIM(:,:,k+(j-1)*n)/framesPerPhase;
        [a,~] = FSOFI_Analysis(stacks_discrete(:,:,...
-           (k+(j-1)*n-1)*framesPerPhase+1:(k+(j-1)*n)*framesPerPhase),2,100,0,itp_factor,'lateral'); 
+           (k+(j-1)*n-1)*framesPerPhase+1:(k+(j-1)*n)*framesPerPhase),2,600,0,itp_factor,'lateral'); 
        framesSOFI(:,:,k+(j-1)*n) = a;
    end
 end
@@ -23,6 +23,11 @@ for i = 1:n^2
     a = fourierInterpolation(framesSIM(:,:,i),itp_factor,'lateral');
     frameSIM_FT(:,:,i) = a;
 end
+% 
+% framesSOFI(1:4,:,:) = 0;
+% framesSOFI(:,1:4,:) = 0;
+% framesSOFI(end-3:end,:,:) = 0;
+% framesSOFI(:,end-3:end,:) = 0;
 
 SIM = zeros(size(frameSIM_FT,1),size(frameSIM_FT,1));
 for i = 1:n^2
@@ -55,10 +60,15 @@ title("Original Image")
 subplot(1,2,2);
 imshow(SOFI,[]);
 title("2nd order SOFI")
+framesSOFI(1:4,:) = 0;
+framesSOFI(:,1:4) = 0;
+framesSOFI(end-3:end,:) = 0;
+framesSOFI(:,end-3:end) = 0;
 framesSOFI_FI = zeros(size(framesSOFI,1)*addation_itp_factor,size(framesSOFI,1)*addation_itp_factor,n^2);
 framesSIM_FIFI = zeros(size(framesSOFI,1)*addation_itp_factor,size(framesSOFI,1)*addation_itp_factor,n^2);
-for i = 1:n^2
-    framesSOFI_FI(:,:,i) = fourierInterpolation(framesSOFI(:,:,i),addation_itp_factor,'lateral');
-    framesSIM_FIFI(:,:,i) = fourierInterpolation(frameSIM_FT(:,:,i),addation_itp_factor,'lateral');
-end
-save('result.mat','framesSIM_FIFI','framesSOFI_FI')
+% for i = 1:n^2
+%     framesSOFI_FI(:,:,i) = fourierInterpolation(framesSOFI(:,:,i),addation_itp_factor,'lateral');
+%     framesSIM_FIFI(:,:,i) = fourierInterpolation(frameSIM_FT(:,:,i),addation_itp_factor,'lateral');
+% end
+
+save('result.mat','framesSIM_FIFI','framesSOFI_FI','Optics','Fluo','Cam','Grid')
